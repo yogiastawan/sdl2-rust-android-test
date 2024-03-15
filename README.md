@@ -6,7 +6,7 @@ Create shared library that can be used in android project using SDL2 rust.
 
 Under `build.sh` change:
 -  `ANDROID_PROJECT` is path of your android project
--  `SDL_LIB` is path of SDL2 Library. This path must contain all variant library (`arm64-v8a`, `armeabi-v7a`, `x86`, `x86_64`). To create SDL library for android see [here](#markdown-header-create-library)
+-  `SDL_LIB` is path of SDL2 Library. This path must contain all variant library (`arm64-v8a`, `armeabi-v7a`, `x86`, `x86_64`). To create SDL library for android see [here](#create-library)
 
 ## Create Debug Library
 
@@ -68,7 +68,7 @@ To create release library:
 7. To make release version, in Android studio click menu `Build->Select Build variant...` and change to `release`. Do step 5 again. Library will be created in directory `your-app/app/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib/`
 
 ## Create Android App
-1. Follow [here](##markdown-header-create-library) from step `1` to `4`.
+1. Follow [here](#create-library) from step `1` to `4`.
 2. Copy `Java Package` in `SDL-directory/android-project/app/src/main/java/` in to `your-app/app/src/main/java/`
 3. change your `MainActivity.kt` like below:
    ```kotlin
