@@ -6,7 +6,7 @@ Create shared library that can be used in android project using SDL2 rust.
 
 Under `build.sh` change:
 -  `ANDROID_PROJECT` is path of your android project
--  `SDL_LIB` is path of SDL2 Library. This path must contain all variant library (`arm64-v8a`, `armeabi-v7a`, `x86`, `x86_64`). To create SDL library for android see [here](##markdown-header-create-library)
+-  `SDL_LIB` is path of SDL2 Library. This path must contain all variant library (`arm64-v8a`, `armeabi-v7a`, `x86`, `x86_64`). To create SDL library for android see [here](#markdown-header-create-library)
 
 ## Create Debug Library
 
