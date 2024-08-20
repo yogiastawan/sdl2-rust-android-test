@@ -7,38 +7,48 @@ SDL_LIB=/home/gihexdev00/Game-Dev/lib/SDL-android
 
 JNI_LIBS=${ANDROID_PROJECT}/app/src/main/jniLibs
 
+TARGET=("aarch64-linux-android" "armv7-linux-androideabi" "i686-linux-android" "x86_64-linux-android")
+ABI=("arm64-v8a" "armeabi-v7a" "x86" "x86_64")
 
 echo -e "${COLOR}Cleaning output directory..."
-rm -rf $JNI_LIBS
-echo -e "${COLOR}Creating output directory..."
-mkdir $JNI_LIBS
-mkdir $JNI_LIBS/arm64-v8a
-mkdir $JNI_LIBS/armeabi-v7a
-mkdir $JNI_LIBS/x86
-mkdir $JNI_LIBS/x86_64
+for B in ${ABI[@]}; do
+rm -f $JNI_LIBS/$B/lib${NAME_LIB}.so
+done
+
+echo -e "${COLOR}Checking output directory:"
+for B in ${ABI[@]}; do
+if [ ! -d $JNI_LIBS/$B ]; then
+    echo -e "${COLOR}Directory\033[0m $JNI_LIBS/$B ${COLOR}not exist. Creating...\033[0m "
+    mkdir $JNI_LIBS/$B
+else
+    echo -e "${COLOR}  Directory\033[0m $B ${COLOR}already exist.\033[0m"
+fi
+done
 
 if [ $# -lt 1 ]; then
     build='debug'
 else
     build=release
-
 fi
 
-echo -e "${COLOR}Copy SDl Lib to target ${build}..."
-cp ${SDL_LIB}/${build}/arm64-v8a/libSDL2.so ./target/aarch64-linux-android/${build}/deps/libSDL2.so
-cp ${SDL_LIB}/${build}/armeabi-v7a/libSDL2.so ./target/armv7-linux-androideabi/${build}/deps/libSDL2.so
-cp ${SDL_LIB}/${build}/x86/libSDL2.so ./target/i686-linux-android/${build}/deps/libSDL2.so
-cp ${SDL_LIB}/${build}/x86_64/libSDL2.so ./target/x86_64-linux-android/${build}/deps/libSDL2.so
+echo -e "${COLOR}\nCopy SDl Lib to target ${build}:\033[0m"
+for i in ${!TARGET[@]}; do
+src=${SDL_LIB}/${build}/${ABI[$i]}/libSDL2.so
+dest=./target/${TARGET[$i]}/${build}/deps/libSDL2.so
+echo -e "${COLOR}  Copy SDl library:\033[0m $src ${COLOR}=>\033[0m $dest"
+cp $src $dest
+done
 
+echo -e "${COLOR}\nBuild ${build}:\033[0m"
+for i in ${!TARGET[@]}; do
+echo -e "${COLOR}  Building ${build}\033[0m [${TARGET[$i]}]${COLOR}:\033[0m"
+cargo build --target ${TARGET[$i]} --$1
+done
 
-echo -e "${COLOR}Build ${build}..."
-cargo build --target aarch64-linux-android --$1
-cargo build --target armv7-linux-androideabi --$1
-cargo build --target i686-linux-android --$1
-cargo build --target x86_64-linux-android --$1
-
-echo -e "${COLOR}Add to ${JNI_LIBS}"
-cp target/aarch64-linux-android/${build}/lib${NAME_LIB}.so $JNI_LIBS/arm64-v8a/lib${NAME_LIB}.so
-cp target/armv7-linux-androideabi/${build}/lib${NAME_LIB}.so $JNI_LIBS/armeabi-v7a/lib${NAME_LIB}.so
-cp target/i686-linux-android/${build}/lib${NAME_LIB}.so $JNI_LIBS/x86/lib${NAME_LIB}.so
-cp target/x86_64-linux-android/${build}/lib${NAME_LIB}.so $JNI_LIBS/x86_64/lib${NAME_LIB}.so
+echo -e "${COLOR}\nAdd library to Android Project:\033[0m"
+for i in ${!TARGET[@]}; do
+src=./target/${TARGET[$i]}/${build}/lib${NAME_LIB}.so
+dest=$JNI_LIBS/${ABI[$i]}/lib${NAME_LIB}.so
+echo -e "${COLOR}  Add library:\033[0m $src ${COLOR}=>\033[0m $dest"
+cp $src $dest
+done
